@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Gemini PDF Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h2>Chat with your PDF (Gemini-powered)</h2>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="file" name="file" accept="application/pdf" required>
+        <button id="uploadBtn" type="submit">Upload PDF</button>
+    </form>
+
+    <div id="chatbox" class="chatbox"></div>
+
+    <form id="chatForm">
+        <input type="text" id="message" placeholder="Type your question..." autocomplete="off" required />
+        <button id="sendBtn" type="submit">Send</button>
+    </form>
+</div>
+
+<script>
+$(function() {
+    let fileUploaded = false;
+
+    $("#uploadForm").on("submit", function(e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+        $("#uploadBtn").prop("disabled", true).text("Uploading...");
+
+        $.ajax({
+            url: "/upload",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function() {
+                fileUploaded = true;
+                $("#chatbox").append('<div class="bot-message">Document uploaded. You can now chat.</div>');
+                $("#uploadBtn").prop("disabled", false).text("Upload PDF");
+            },
+            error: function() {
+                $("#chatbox").append('<div class="bot-message">Failed to upload file.</div>');
+                $("#uploadBtn").prop("disabled", false).text("Upload PDF");
+            }
+        });
+    });
+
+    $("#chatForm").on("submit", function(e) {
+        e.preventDefault();
+        if (!fileUploaded) {
+            $("#chatbox").append('<div class="bot-message">Please upload a PDF first.</div>');
+            return;
+        }
+        let message = $("#message").val().trim();
+        if (message === "") return;
+        $("#chatbox").append('<div class="user-message">' + escapeHtml(message) + '</div>');
+        $("#message").val("");
+
+        $.ajax({
+            url: "/chat",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ message: message }),
+            success: function(res) {
+                if (res.reply) {
+                    $("#chatbox").append('<div class="bot-message">' + escapeHtml(res.reply) + '</div>');
+                } else if (res.error) {
+                    $("#chatbox").append('<div class="bot-message">Error: ' + escapeHtml(res.error) + '</div>');
+                }
+                $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
+            },
+            error: function() {
+                $("#chatbox").append('<div class="bot-message">Error sending message.</div>');
+            }
+        });
+    });
+
+    function escapeHtml(text) {
+        return text.replace(/[&<>"'\/]/g, function (s) {
+            const entityMap = {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;",
+                "/": "&#x2F;"
+            };
+            return entityMap[s];
+        });
+    }
+});
+</script>
+</body>
+</html>

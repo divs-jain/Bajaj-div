@@ -1,0 +1,99 @@
+body {
+    background: #f6f8fc;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.container {
+    width: 380px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(170,170,170,0.5);
+    padding: 32px 28px 22px 28px;
+}
+
+h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 16px;
+}
+
+#uploadForm {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+#chatbox {
+    border: 1px solid #dedede;
+    background: #f3f3fc;
+    border-radius: 10px;
+    min-height: 180px;
+    max-height: 350px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    padding: 12px 10px;
+    box-shadow: 0 2px 8px #eee;
+}
+
+.user-message, .bot-message {
+    margin: 8px 0;
+    padding: 9px 16px;
+    border-radius: 15px;
+    display: inline-block;
+    max-width: 80%;
+    word-wrap: break-word;
+    font-size: 1rem;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.user-message {
+    background: #4F8FF7;
+    color: white;
+    float: right;
+    clear: both;
+}
+
+.bot-message {
+    background: #e6e6ef;
+    color: #34495e;
+    float: left;
+    clear: both;
+}
+
+#chatForm {
+    display: flex;
+    gap: 12px;
+}
+
+#message {
+    flex-grow: 1;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+}
+
+#sendBtn, #uploadBtn {
+    background: #4476fc;
+    color: white;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.18s ease-in-out;
+}
+
+#sendBtn:hover, #uploadBtn:hover {
+    background: #345ad6;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
